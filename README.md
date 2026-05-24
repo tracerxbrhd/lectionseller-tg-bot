@@ -120,6 +120,7 @@ python -c "import secrets; print(secrets.token_urlsafe(48))"
 
 ```powershell
 .\scripts\local-start.ps1 -CreateAdmin
+.\scripts\local-start.ps1 -SeedDemoCatalog
 .\scripts\local-start.ps1 -Rebuild
 .\scripts\local-start.ps1 -SkipBuild
 .\scripts\local-start.ps1 -SkipMigrations
@@ -325,6 +326,12 @@ YOOKASSA_RETURN_URL=https://example.com/payments/return
 CREATE_ADMIN=1 ADMIN_USERNAME=admin ./scripts/server-deploy.sh
 ```
 
+Заполнить демо-каталог во время деплоя:
+
+```bash
+SEED_DEMO_CATALOG=1 ./scripts/server-deploy.sh
+```
+
 `scripts/server-install-ubuntu.sh` ставит Docker Engine и Docker Compose plugin через официальный apt repository Docker для Ubuntu. Такой способ выбран вместо convenience script, потому что официальный Docker convenience script сам помечен как вариант для testing/development, а для production Docker рекомендует apt repository.
 
 Дополнительные опции install script:
@@ -410,6 +417,20 @@ docker-compose run --rm web alembic check
 ```powershell
 docker-compose run --rm web python -m app.cli.create_admin --username admin
 ```
+
+Заполнить демо-каталог разделами, блоками и лекциями:
+
+```powershell
+.\scripts\seed-demo-catalog.ps1
+```
+
+То же самое на Linux/VPS:
+
+```bash
+./scripts/seed-demo-catalog.sh
+```
+
+Команда идемпотентна: повторный запуск обновляет найденные записи по названию, а не создаёт дубли. Материалы к лекциям она не добавляет, файлы прикрепляются отдельно через админку.
 
 Пересобрать и перезапустить сервисы:
 

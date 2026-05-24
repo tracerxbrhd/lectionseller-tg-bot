@@ -3,6 +3,7 @@ param(
     [switch]$SkipBuild,
     [switch]$SkipMigrations,
     [switch]$CreateAdmin,
+    [switch]$SeedDemoCatalog,
     [string]$AdminUsername = "admin",
     [switch]$SkipEnvCheck
 )
@@ -128,6 +129,11 @@ if (-not $SkipMigrations) {
 if ($CreateAdmin) {
     Write-Step "Creating or updating web admin"
     Invoke-Compose run --rm web python -m app.cli.create_admin --username $AdminUsername
+}
+
+if ($SeedDemoCatalog) {
+    Write-Step "Seeding demo catalog"
+    Invoke-Compose run --rm web python -m app.cli.seed_demo_catalog
 }
 
 Write-Step "Starting web and bot"

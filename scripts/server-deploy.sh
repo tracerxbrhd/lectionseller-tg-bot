@@ -104,6 +104,11 @@ else
   printf '  CREATE_ADMIN=1 ADMIN_USERNAME=admin ./scripts/server-deploy.sh\n'
 fi
 
+if [[ "${SEED_DEMO_CATALOG:-0}" == "1" ]]; then
+  log "Seeding demo catalog"
+  compose run --rm web python -m app.cli.seed_demo_catalog
+fi
+
 log "Starting application services"
 compose up -d web bot
 
