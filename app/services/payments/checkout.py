@@ -23,7 +23,7 @@ class CheckoutService:
 
         provider_payment = await self._payment_service.create_payment(
             purchase=purchase,
-            idempotency_key=f"purchase:{purchase.id}",
+            idempotency_key=_purchase_idempotency_key(purchase),
         )
 
         if existing is not None:
@@ -54,3 +54,17 @@ class CheckoutService:
             PaymentStatus.SUCCEEDED,
         }
         return payment.status in reusable_statuses and bool(payment.confirmation_url)
+
+
+def _purchase_idempotency_key(purchase: Purchase) -> str:
+    created_at = purchase.created_at.isoformat() if purchase.created_at is not None else "not-set"
+    return ":".join(
+        (
+            "purchase",
+            str(purchase.id),
+            str(purchase.user_id),
+            purchase.purchase_type.value,
+            str(purchase.object_id),
+            created_at,
+        ),
+    )

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 from decimal import Decimal
 from typing import Any
@@ -40,7 +41,7 @@ class YooKassaPaymentService(PaymentService):
             response = await asyncio.to_thread(
                 YooKassaPayment.create,
                 payload,
-                idempotency_key,
+                self._provider_idempotency_key(idempotency_key, payload),
             )
         except Exception as exc:
             logger.exception("YooKassa payment creation failed for purchase %s", purchase.id)
@@ -124,6 +125,24 @@ class YooKassaPaymentService(PaymentService):
     @staticmethod
     def _amount_to_yookassa(amount: Decimal) -> str:
         return f"{amount.quantize(Decimal('0.01')):.2f}"
+
+    def _provider_idempotency_key(
+        self,
+        idempotency_key: str,
+        payload: dict[str, Any],
+    ) -> str:
+        namespace = "|".join(
+            (
+                self._settings.app_env,
+                self._settings.base_url,
+                self._settings.yookassa_return_url,
+            ),
+        )
+        payload_json = json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str)
+        digest = hashlib.sha256(
+            f"{namespace}|{idempotency_key}|{payload_json}".encode("utf-8"),
+        ).hexdigest()
+        return f"lectionseller:{digest[:32]}"
 
 
 def _extract_amount(payload: dict[str, Any]) -> Decimal:
