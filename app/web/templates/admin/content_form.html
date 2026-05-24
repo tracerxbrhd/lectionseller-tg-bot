@@ -1,0 +1,52 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ "Редактировать материал" if item and item.id else "Новый материал" }}{% endblock %}
+{% block content %}
+<h1>{{ "Редактировать материал" if item and item.id else "Новый материал" }}</h1>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+<form class="panel" method="post" enctype="multipart/form-data" action="{{ '/admin/content/' ~ item.id if item and item.id else '/admin/content' }}">
+  <label>Лекция
+    <select name="lecture_id" required>
+      {% for lecture, block, section in lectures %}
+      <option value="{{ lecture.id }}" {% if item and item.lecture_id == lecture.id %}selected{% endif %}>
+        {{ section.title }} / {{ block.title }} / {{ lecture.title }}
+      </option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Тип
+    <select name="type" required>
+      {% for content_type in content_types %}
+      <option value="{{ content_type.value }}" {% if item and item.type == content_type %}selected{% endif %}>
+        {{ content_type.value }}
+      </option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Название
+    <input name="title" value="{{ item.title if item else '' }}" required>
+  </label>
+  <label>Загрузить файл
+    <input name="upload" type="file">
+  </label>
+  <label>file_path
+    <input name="file_path" value="{{ item.file_path if item and item.file_path else '' }}">
+  </label>
+  <label>telegram_file_id
+    <input name="telegram_file_id" value="{{ item.telegram_file_id if item and item.telegram_file_id else '' }}">
+  </label>
+  <label>Текстовый материал
+    <textarea name="text_content">{{ item.text_content if item and item.text_content else '' }}</textarea>
+  </label>
+  <label>Порядок сортировки
+    <input name="sort_order" type="number" value="{{ item.sort_order if item else 0 }}">
+  </label>
+  <label class="checkbox">
+    <input name="protected_content_enabled" type="checkbox" value="true" {% if not item or item.protected_content_enabled %}checked{% endif %}>
+    protected_content
+  </label>
+  <div class="actions">
+    <button type="submit">Сохранить</button>
+    <a class="button secondary" href="/admin/content">Назад</a>
+  </div>
+</form>
+{% endblock %}

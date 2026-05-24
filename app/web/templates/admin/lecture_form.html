@@ -1,0 +1,39 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ "Редактировать лекцию" if lecture else "Новая лекция" }}{% endblock %}
+{% block content %}
+<h1>{{ "Редактировать лекцию" if lecture else "Новая лекция" }}</h1>
+<form class="panel" method="post" action="{{ '/admin/lectures/' ~ lecture.id if lecture else '/admin/lectures' }}">
+  <label>Блок
+    <select name="block_id" required>
+      {% for block, section in blocks %}
+      <option value="{{ block.id }}" {% if lecture and lecture.block_id == block.id %}selected{% endif %}>
+        {{ section.title }} / {{ block.title }}
+      </option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Название
+    <input name="title" value="{{ lecture.title if lecture else '' }}" required>
+  </label>
+  <label>Краткое описание
+    <textarea name="short_description">{{ lecture.short_description if lecture and lecture.short_description else '' }}</textarea>
+  </label>
+  <label>Полное описание
+    <textarea name="full_description">{{ lecture.full_description if lecture and lecture.full_description else '' }}</textarea>
+  </label>
+  <label>Цена
+    <input name="price" value="{{ lecture.price if lecture else '0.00' }}" required>
+  </label>
+  <label>Порядок сортировки
+    <input name="sort_order" type="number" value="{{ lecture.sort_order if lecture else 0 }}">
+  </label>
+  <label class="checkbox">
+    <input name="is_active" type="checkbox" value="true" {% if not lecture or lecture.is_active %}checked{% endif %}>
+    Активна
+  </label>
+  <div class="actions">
+    <button type="submit">Сохранить</button>
+    <a class="button secondary" href="/admin/lectures">Назад</a>
+  </div>
+</form>
+{% endblock %}

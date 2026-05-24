@@ -1,0 +1,30 @@
+{% extends "admin/base.html" %}
+{% block title %}Разделы{% endblock %}
+{% block content %}
+<div class="actions">
+  <h1>Разделы</h1>
+  <a class="button" href="/admin/sections/new">Добавить раздел</a>
+</div>
+<table>
+  <tr><th>ID</th><th>Название</th><th>Порядок</th><th>Активен</th><th></th></tr>
+  {% for section in sections %}
+  <tr>
+    <td>{{ section.id }}</td>
+    <td>
+      <strong>{{ section.title }}</strong>
+      {% if section.description %}<div class="muted">{{ section.description }}</div>{% endif %}
+    </td>
+    <td>{{ section.sort_order }}</td>
+    <td>{{ "да" if section.is_active else "нет" }}</td>
+    <td class="actions">
+      <a class="button secondary" href="/admin/sections/{{ section.id }}/edit">Редактировать</a>
+      <form method="post" action="/admin/sections/{{ section.id }}/delete">
+        <button class="danger" type="submit">Удалить</button>
+      </form>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="5" class="muted">Разделов пока нет.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

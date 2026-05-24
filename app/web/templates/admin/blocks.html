@@ -1,0 +1,32 @@
+{% extends "admin/base.html" %}
+{% block title %}Блоки{% endblock %}
+{% block content %}
+<div class="actions">
+  <h1>Блоки</h1>
+  <a class="button" href="/admin/blocks/new">Добавить блок</a>
+</div>
+<table>
+  <tr><th>ID</th><th>Раздел</th><th>Название</th><th>Цена</th><th>Порядок</th><th>Активен</th><th></th></tr>
+  {% for block, section in rows %}
+  <tr>
+    <td>{{ block.id }}</td>
+    <td>{{ section.title }}</td>
+    <td>
+      <strong>{{ block.title }}</strong>
+      {% if block.description %}<div class="muted">{{ block.description }}</div>{% endif %}
+    </td>
+    <td>{{ block.price }}</td>
+    <td>{{ block.sort_order }}</td>
+    <td>{{ "да" if block.is_active else "нет" }}</td>
+    <td class="actions">
+      <a class="button secondary" href="/admin/blocks/{{ block.id }}/edit">Редактировать</a>
+      <form method="post" action="/admin/blocks/{{ block.id }}/delete">
+        <button class="danger" type="submit">Удалить</button>
+      </form>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7" class="muted">Блоков пока нет.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

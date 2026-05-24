@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Admin{% endblock %}</title>
+  <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+  <header class="topbar">
+    <div><strong>Lecture Seller Admin</strong></div>
+    <div class="actions">
+      <span>{{ admin.username }}</span>
+      <form method="post" action="/admin/logout">
+        <button class="secondary" type="submit">Выйти</button>
+      </form>
+    </div>
+  </header>
+  <div class="layout">
+    <nav class="sidebar">
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/admin/sections">Разделы</a>
+      <a href="/admin/blocks">Блоки</a>
+      <a href="/admin/lectures">Лекции</a>
+      <a href="/admin/content">Материалы</a>
+      <a href="/admin/users">Пользователи</a>
+      <a href="/admin/purchases">Покупки</a>
+      <a href="/admin/payments">Платежи</a>
+      <a href="/admin/access">Доступы</a>
+      <a href="/admin/support">Поддержка</a>
+    </nav>
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>

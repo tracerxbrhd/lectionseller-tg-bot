@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+{% block title %}Покупки{% endblock %}
+{% block content %}
+<h1>Покупки</h1>
+<table>
+  <tr><th>ID</th><th>Пользователь</th><th>Тип</th><th>Object ID</th><th>Цена</th><th>Статус</th><th>Создана</th><th>Оплачена</th></tr>
+  {% for purchase, user in rows %}
+  <tr>
+    <td>{{ purchase.id }}</td>
+    <td>{{ user.telegram_id }} {% if user.username %}(@{{ user.username }}){% endif %}</td>
+    <td>{{ purchase.purchase_type.value }}</td>
+    <td>{{ purchase.object_id }}</td>
+    <td>{{ purchase.price }}</td>
+    <td>{{ purchase.status.value }}</td>
+    <td>{{ purchase.created_at }}</td>
+    <td>{{ purchase.paid_at or "" }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="8" class="muted">Покупок пока нет.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

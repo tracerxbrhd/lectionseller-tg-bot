@@ -1,0 +1,29 @@
+{% extends "admin/base.html" %}
+{% block title %}Пользователи{% endblock %}
+{% block content %}
+<h1>Пользователи</h1>
+<table>
+  <tr><th>ID</th><th>Telegram</th><th>Имя</th><th>Username</th><th>Создан</th><th>Blocked</th><th>Admin</th><th></th></tr>
+  {% for user in users %}
+  <tr>
+    <td>{{ user.id }}</td>
+    <td>{{ user.telegram_id }}</td>
+    <td>{{ user.first_name or "" }} {{ user.last_name or "" }}</td>
+    <td>{{ user.username or "" }}</td>
+    <td>{{ user.created_at }}</td>
+    <td>{{ "да" if user.is_blocked else "нет" }}</td>
+    <td>{{ "да" if user.is_admin else "нет" }}</td>
+    <td class="actions">
+      <form method="post" action="/admin/users/{{ user.id }}/toggle-block">
+        <button class="secondary" type="submit">{{ "Разблокировать" if user.is_blocked else "Заблокировать" }}</button>
+      </form>
+      <form method="post" action="/admin/users/{{ user.id }}/toggle-admin">
+        <button class="secondary" type="submit">{{ "Снять admin" if user.is_admin else "Сделать admin" }}</button>
+      </form>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="8" class="muted">Пользователей пока нет.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

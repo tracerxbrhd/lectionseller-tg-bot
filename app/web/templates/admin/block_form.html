@@ -1,0 +1,36 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ "Редактировать блок" if block else "Новый блок" }}{% endblock %}
+{% block content %}
+<h1>{{ "Редактировать блок" if block else "Новый блок" }}</h1>
+<form class="panel" method="post" action="{{ '/admin/blocks/' ~ block.id if block else '/admin/blocks' }}">
+  <label>Раздел
+    <select name="section_id" required>
+      {% for section in sections %}
+      <option value="{{ section.id }}" {% if block and block.section_id == section.id %}selected{% endif %}>
+        {{ section.title }}
+      </option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Название
+    <input name="title" value="{{ block.title if block else '' }}" required>
+  </label>
+  <label>Описание
+    <textarea name="description">{{ block.description if block and block.description else '' }}</textarea>
+  </label>
+  <label>Цена
+    <input name="price" value="{{ block.price if block else '0.00' }}" required>
+  </label>
+  <label>Порядок сортировки
+    <input name="sort_order" type="number" value="{{ block.sort_order if block else 0 }}">
+  </label>
+  <label class="checkbox">
+    <input name="is_active" type="checkbox" value="true" {% if not block or block.is_active %}checked{% endif %}>
+    Активен
+  </label>
+  <div class="actions">
+    <button type="submit">Сохранить</button>
+    <a class="button secondary" href="/admin/blocks">Назад</a>
+  </div>
+</form>
+{% endblock %}

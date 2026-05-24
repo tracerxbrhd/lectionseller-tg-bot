@@ -1,0 +1,21 @@
+{% extends "admin/base.html" %}
+{% block title %}Платежи{% endblock %}
+{% block content %}
+<h1>Платежи</h1>
+<table>
+  <tr><th>ID</th><th>Покупка</th><th>Пользователь</th><th>Provider ID</th><th>Сумма</th><th>Статус</th><th>Создан</th></tr>
+  {% for payment, user, purchase in rows %}
+  <tr>
+    <td>{{ payment.id }}</td>
+    <td>#{{ purchase.id }} {{ purchase.purchase_type.value }}:{{ purchase.object_id }}</td>
+    <td>{{ user.telegram_id }} {% if user.username %}(@{{ user.username }}){% endif %}</td>
+    <td><code>{{ payment.provider_payment_id }}</code></td>
+    <td>{{ payment.amount }}</td>
+    <td>{{ payment.status.value }}</td>
+    <td>{{ payment.created_at }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7" class="muted">Платежей пока нет.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

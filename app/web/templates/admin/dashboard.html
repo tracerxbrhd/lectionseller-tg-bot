@@ -1,0 +1,51 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+<section class="grid">
+  <div class="stat"><span>Пользователи</span><strong>{{ stats.users }}</strong></div>
+  <div class="stat"><span>Разделы</span><strong>{{ stats.sections }}</strong></div>
+  <div class="stat"><span>Блоки</span><strong>{{ stats.blocks }}</strong></div>
+  <div class="stat"><span>Лекции</span><strong>{{ stats.lectures }}</strong></div>
+  <div class="stat"><span>Покупки</span><strong>{{ stats.purchases }}</strong></div>
+  <div class="stat"><span>Оплаченные</span><strong>{{ stats.paid_purchases }}</strong></div>
+  <div class="stat"><span>Выручка</span><strong>{{ stats.revenue }} ₽</strong></div>
+  <div class="stat"><span>Открытые обращения</span><strong>{{ stats.support_open }}</strong></div>
+</section>
+
+<section class="panel">
+  <h2>Последние покупки</h2>
+  <table>
+    <tr><th>ID</th><th>Пользователь</th><th>Тип</th><th>Объект</th><th>Цена</th><th>Статус</th></tr>
+    {% for purchase, user in latest_purchases %}
+    <tr>
+      <td>{{ purchase.id }}</td>
+      <td>{{ user.telegram_id }}</td>
+      <td>{{ purchase.purchase_type.value }}</td>
+      <td>{{ purchase.object_id }}</td>
+      <td>{{ purchase.price }}</td>
+      <td>{{ purchase.status.value }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="muted">Покупок пока нет.</td></tr>
+    {% endfor %}
+  </table>
+</section>
+
+<section class="panel">
+  <h2>Последние обращения</h2>
+  <table>
+    <tr><th>ID</th><th>Пользователь</th><th>Статус</th><th>Сообщение</th></tr>
+    {% for request, user in latest_support %}
+    <tr>
+      <td>{{ request.id }}</td>
+      <td>{{ user.telegram_id }}</td>
+      <td>{{ request.status.value }}</td>
+      <td>{{ request.message }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4" class="muted">Обращений пока нет.</td></tr>
+    {% endfor %}
+  </table>
+</section>
+{% endblock %}

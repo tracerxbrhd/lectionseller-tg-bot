@@ -1,0 +1,49 @@
+{% extends "admin/base.html" %}
+{% block title %}Доступы{% endblock %}
+{% block content %}
+<h1>Доступы</h1>
+<section class="panel">
+  <h2>Выдать доступ вручную</h2>
+  <form method="post" action="/admin/access">
+    <label>Пользователь
+      <select name="user_id" required>
+        {% for user in users %}
+        <option value="{{ user.id }}">{{ user.telegram_id }} {% if user.username %}(@{{ user.username }}){% endif %}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Лекция
+      <select name="lecture_id" required>
+        {% for lecture, block, section in lectures %}
+        <option value="{{ lecture.id }}">{{ section.title }} / {{ block.title }} / {{ lecture.title }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button type="submit">Выдать доступ</button>
+  </form>
+</section>
+
+<table>
+  <tr><th>ID</th><th>Пользователь</th><th>Лекция</th><th>Источник</th><th>Выдан</th><th>Отозван</th><th>Активен</th><th></th></tr>
+  {% for grant, user, lecture in rows %}
+  <tr>
+    <td>{{ grant.id }}</td>
+    <td>{{ user.telegram_id }} {% if user.username %}(@{{ user.username }}){% endif %}</td>
+    <td>{{ lecture.title }}</td>
+    <td>{{ "purchase #" ~ grant.source_purchase_id if grant.source_purchase_id else "manual" }}</td>
+    <td>{{ grant.granted_at }}</td>
+    <td>{{ grant.revoked_at or "" }}</td>
+    <td>{{ "да" if grant.is_active else "нет" }}</td>
+    <td>
+      {% if grant.is_active %}
+      <form method="post" action="/admin/access/{{ grant.id }}/revoke">
+        <button class="danger" type="submit">Отозвать</button>
+      </form>
+      {% endif %}
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="8" class="muted">Доступов пока нет.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}
