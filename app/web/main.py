@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import argparse
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
+from urllib.parse import urlparse
 
 from app.common.logging import configure_logging, get_logger
 from app.config.app_info import APP_INFO
@@ -11,8 +12,10 @@ logger = get_logger(__name__)
 
 
 def create_app() -> object:
-    from fastapi import FastAPI
+    from fastapi import FastAPI, Request, Response
+    from fastapi.responses import PlainTextResponse
     from fastapi.staticfiles import StaticFiles
+    from starlette.middleware.trustedhost import TrustedHostMiddleware
 
     from app.config.settings import get_settings
     from app.web.admin.router import router as admin_router
@@ -20,9 +23,35 @@ def create_app() -> object:
 
     settings = get_settings()
     app = FastAPI(title=APP_INFO.name, version=APP_INFO.version, debug=settings.app_debug)
+    if settings.allowed_host_list:
+        app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_host_list)
     app.mount("/static", StaticFiles(directory="app/web/static"), name="static")
     app.include_router(admin_router)
     app.include_router(payments_router)
+
+    @app.middleware("http")
+    async def admin_csrf_guard(
+        request: Request,
+        call_next: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
+        if request.url.path.startswith("/admin") and request.method in {
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE",
+        }:
+            source = request.headers.get("origin") or request.headers.get("referer")
+            source_host = urlparse(source).hostname if source else None
+            request_host = request.url.hostname
+            allowed_hosts = {host.lower() for host in settings.allowed_host_list}
+            if "*" not in allowed_hosts and (
+                source_host is None
+                or request_host is None
+                or source_host.lower() not in allowed_hosts | {request_host.lower()}
+            ):
+                return PlainTextResponse("CSRF validation failed.", status_code=403)
+
+        return await call_next(request)
 
     @app.get("/health", tags=["system"])
     async def health() -> dict[str, str]:

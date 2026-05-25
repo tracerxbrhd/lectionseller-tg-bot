@@ -49,13 +49,15 @@ validate_env() {
     fail ".env was created from .env.example. Fill production secrets and run this script again."
   }
 
-  local bot_token app_secret db_password app_env app_debug base_url
+  local bot_token app_secret db_password app_env app_debug base_url allowed_hosts web_bind_host
   bot_token="$(require_env BOT_TOKEN)"
   app_secret="$(require_env APP_SECRET_KEY)"
   db_password="$(require_env DATABASE_PASSWORD)"
   app_env="$(env_value APP_ENV)"
   app_debug="$(env_value APP_DEBUG)"
   base_url="$(env_value BASE_URL)"
+  allowed_hosts="$(env_value ALLOWED_HOSTS)"
+  web_bind_host="$(env_value WEB_BIND_HOST)"
 
   [[ "$bot_token" != "replace-with-telegram-bot-token" ]] || fail "Replace BOT_TOKEN in .env."
   [[ "$app_secret" != change-me* ]] || fail "Replace APP_SECRET_KEY with a long random secret."
@@ -72,6 +74,18 @@ validate_env() {
 
   if [[ -z "$base_url" || "$base_url" == http://localhost* ]]; then
     printf 'WARNING: BASE_URL is "%s". Set public HTTPS URL for YooKassa webhooks.\n' "${base_url:-empty}" >&2
+  fi
+
+  if [[ "$base_url" != https://* ]]; then
+    printf 'WARNING: BASE_URL is "%s". HTTPS is expected for production.\n' "${base_url:-empty}" >&2
+  fi
+
+  if [[ -z "$allowed_hosts" || "$allowed_hosts" == "localhost,127.0.0.1" ]]; then
+    printf 'WARNING: ALLOWED_HOSTS is "%s". Add public domains for production.\n' "${allowed_hosts:-empty}" >&2
+  fi
+
+  if [[ -n "$web_bind_host" && "$web_bind_host" != "127.0.0.1" ]]; then
+    printf 'WARNING: WEB_BIND_HOST is "%s". Use 127.0.0.1 behind Nginx in production.\n' "$web_bind_host" >&2
   fi
 
   if [[ -z "$(env_value YOOKASSA_SHOP_ID)" || -z "$(env_value YOOKASSA_SECRET_KEY)" ]]; then

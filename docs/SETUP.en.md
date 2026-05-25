@@ -23,10 +23,12 @@ Main variables:
 | `APP_LOG_LEVEL` | Logging level. |
 | `APP_SECRET_KEY` | Secret for signed admin session cookies. |
 | `BASE_URL` | Public web service URL. |
+| `ALLOWED_HOSTS` | Allowed HTTP Host headers for the web service. |
 | `BOT_TOKEN` | Telegram bot token. |
 | `ADMIN_TELEGRAM_IDS` | Comma-separated Telegram admin IDs. |
 | `DATABASE_*` | PostgreSQL settings. |
 | `REDIS_*` | Redis settings. |
+| `WEB_BIND_HOST` | Host/IP where the web service port is published on the server. For production with Nginx: `127.0.0.1`. |
 | `WEB_PORT` | Host port for web/admin service. |
 | `YOOKASSA_SHOP_ID` | YooKassa shop ID. |
 | `YOOKASSA_SECRET_KEY` | YooKassa secret key. |
@@ -129,13 +131,17 @@ Production minimum:
 APP_ENV=production
 APP_DEBUG=false
 APP_SECRET_KEY=<long-random-secret>
-BASE_URL=http://<SERVER_IP>:8000
+BASE_URL=https://tracerxbrhd.ru
+ALLOWED_HOSTS=tracerxbrhd.ru,www.tracerxbrhd.ru,api.tracerxbrhd.ru,localhost,127.0.0.1
 BOT_TOKEN=<telegram-bot-token>
 DATABASE_PASSWORD=<strong-db-password>
+WEB_BIND_HOST=127.0.0.1
 YOOKASSA_SHOP_ID=<shop-id>
 YOOKASSA_SECRET_KEY=<secret-key>
-YOOKASSA_RETURN_URL=http://<SERVER_IP>:8000/payments/return
+YOOKASSA_RETURN_URL=https://tracerxbrhd.ru/payments/return
 ```
+
+Detailed guide for the `tracerxbrhd.ru` domain: [DEPLOY.tracerxbrhd.ru.md](DEPLOY.tracerxbrhd.ru.md).
 
 Deploy:
 

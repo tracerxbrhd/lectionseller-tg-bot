@@ -15,7 +15,6 @@ COPY pyproject.toml ./
 COPY alembic.ini ./
 COPY app ./app
 COPY alembic ./alembic
-COPY tests ./tests
 
 RUN pip install --upgrade pip \
     && pip install .

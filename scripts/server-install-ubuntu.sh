@@ -33,7 +33,7 @@ fi
 
 log "Installing base packages"
 $SUDO apt-get update
-$SUDO apt-get install -y ca-certificates curl git gnupg openssl ufw
+$SUDO apt-get install -y ca-certificates curl git gnupg nginx openssl snapd ufw
 
 if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
   log "Docker and Docker Compose plugin are already installed"
@@ -70,6 +70,9 @@ fi
 log "Enabling Docker service"
 $SUDO systemctl enable --now docker
 
+log "Enabling Nginx service"
+$SUDO systemctl enable --now nginx
+
 target_user="${APP_USER:-${SUDO_USER:-}}"
 if [[ -n "$target_user" && "$target_user" != "root" ]]; then
   log "Adding user '$target_user' to docker group"
@@ -89,6 +92,7 @@ log "Installed versions"
 docker --version || $SUDO docker --version
 docker compose version || $SUDO docker compose version
 git --version
+nginx -v
 
 cat <<'EOF'
 
@@ -99,6 +103,7 @@ Next steps:
 2. Copy or clone the project to the server.
 3. Create .env from .env.example and fill production secrets.
 4. Run: ./scripts/server-deploy.sh
+5. Install deploy/nginx/tracerxbrhd.ru.conf and issue HTTPS certificate with Certbot.
 
 Optional firewall setup:
   CONFIGURE_FIREWALL=1 ./scripts/server-install-ubuntu.sh

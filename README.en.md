@@ -117,7 +117,8 @@ Business logic is kept separate from Telegram handlers and web routes. This impr
 
 ## Documentation
 
-- [Инструкции по запуску и деплою](docs/SETUP.ru.md)
+- [Russian setup and deployment guide](docs/SETUP.ru.md)
+- [Production deployment for tracerxbrhd.ru](docs/DEPLOY.tracerxbrhd.ru.md)
 - [Setup and deployment guide](docs/SETUP.en.md)
 
 ## License

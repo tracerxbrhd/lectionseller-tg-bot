@@ -118,7 +118,8 @@ Web-admin panel позволяет управлять проектом без р
 ## Документация
 
 - [Инструкции по запуску и деплою](docs/SETUP.ru.md)
-- [Setup and deployment guide](docs/SETUP.en.md)
+- [Production-деплой для tracerxbrhd.ru](docs/DEPLOY.tracerxbrhd.ru.md)
+- [Инструкции по запуску и деплою на английском](docs/SETUP.en.md)
 
 ## Лицензия
 

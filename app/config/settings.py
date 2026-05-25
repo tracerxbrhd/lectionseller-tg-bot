@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     app_log_level: str = "INFO"
     app_secret_key: SecretStr = Field(default=SecretStr("change-me-only-for-local"))
     base_url: str = "http://localhost:8000"
+    allowed_hosts: str = "localhost,127.0.0.1"
 
     bot_token: SecretStr | None = None
     admin_telegram_ids: str = ""
@@ -103,6 +104,12 @@ class Settings(BaseSettings):
             for item in self.yookassa_webhook_allowed_ips.split(",")
             if item.strip()
         ]
+
+    @property
+    def allowed_host_list(self) -> list[str]:
+        if not self.allowed_hosts:
+            return []
+        return [item.strip() for item in self.allowed_hosts.split(",") if item.strip()]
 
 
 @lru_cache(maxsize=1)
