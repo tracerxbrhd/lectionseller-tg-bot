@@ -51,7 +51,10 @@ async def catalog_menu(message: Message, session: AsyncSession) -> None:
     sections = await service.list_sections()
     await message.answer(
         _render_sections(sections),
-        reply_markup=build_sections_keyboard(sections),
+        reply_markup=build_sections_keyboard(
+            sections,
+            miniapp_url=get_settings().effective_miniapp_url,
+        ),
     )
 
 
@@ -62,7 +65,10 @@ async def show_sections(callback: CallbackQuery, session: AsyncSession) -> None:
     await _edit_catalog_message(
         callback,
         _render_sections(sections),
-        build_sections_keyboard(sections),
+        build_sections_keyboard(
+            sections,
+            miniapp_url=get_settings().effective_miniapp_url,
+        ),
     )
 
 
@@ -83,7 +89,11 @@ async def show_section(callback: CallbackQuery, session: AsyncSession) -> None:
     await _edit_catalog_message(
         callback,
         _render_section(section, blocks),
-        build_section_keyboard(section.id, blocks),
+        build_section_keyboard(
+            section.id,
+            blocks,
+            miniapp_url=get_settings().effective_miniapp_url,
+        ),
     )
 
 
@@ -104,7 +114,11 @@ async def show_block(callback: CallbackQuery, session: AsyncSession) -> None:
     await _edit_catalog_message(
         callback,
         _render_block(block, lectures),
-        build_block_keyboard(block, lectures),
+        build_block_keyboard(
+            block,
+            lectures,
+            miniapp_url=get_settings().effective_miniapp_url,
+        ),
     )
 
 
@@ -124,7 +138,10 @@ async def show_lecture(callback: CallbackQuery, session: AsyncSession) -> None:
     await _edit_catalog_message(
         callback,
         _render_lecture(lecture),
-        build_lecture_keyboard(lecture),
+        build_lecture_keyboard(
+            lecture,
+            miniapp_url=get_settings().effective_miniapp_url,
+        ),
     )
 
 
@@ -225,7 +242,10 @@ def _render_sections(sections: list[SectionDTO]) -> str:
 def _render_section(section: SectionDTO, blocks: list[BlockDTO]) -> str:
     description = f"\n\n{escape(section.description)}" if section.description else ""
     if not blocks:
-        return f"<b>{escape(section.title)}</b>{description}\n\nВ этом разделе пока нет активных блоков."
+        return (
+            f"<b>{escape(section.title)}</b>{description}\n\n"
+            "В этом разделе пока нет активных блоков."
+        )
 
     block_lines = "\n".join(
         f"• {escape(block.title)} - {_format_price(block.price)}" for block in blocks

@@ -19,6 +19,8 @@ def create_app() -> object:
 
     from app.config.settings import get_settings
     from app.web.admin.router import router as admin_router
+    from app.web.miniapp import api_router as miniapp_api_router
+    from app.web.miniapp import frontend_router as miniapp_frontend_router
     from app.web.routers.payments import router as payments_router
 
     settings = get_settings()
@@ -26,6 +28,13 @@ def create_app() -> object:
     if settings.allowed_host_list:
         app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_host_list)
     app.mount("/static", StaticFiles(directory="app/web/static"), name="static")
+    app.mount(
+        "/app/assets",
+        StaticFiles(directory="frontend/miniapp/dist/assets", check_dir=False),
+        name="miniapp-assets",
+    )
+    app.include_router(miniapp_frontend_router)
+    app.include_router(miniapp_api_router)
     app.include_router(admin_router)
     app.include_router(payments_router)
 

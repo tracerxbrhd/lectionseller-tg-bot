@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 
 from app.services.content import ContentItemDTO, PurchasedLectureDTO
 
@@ -22,6 +22,8 @@ def purchased_content_callback(content_item_id: int) -> str:
 
 def build_purchased_lectures_keyboard(
     lectures: Iterable[PurchasedLectureDTO],
+    *,
+    miniapp_url: str | None = None,
 ) -> InlineKeyboardMarkup:
     rows = [
         [
@@ -32,11 +34,15 @@ def build_purchased_lectures_keyboard(
         ]
         for lecture in lectures
     ]
+    if miniapp_url and _is_web_app_url(miniapp_url):
+        rows.append([_miniapp_button(miniapp_url)])
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
 def build_purchased_lecture_keyboard(
     content_items: Iterable[ContentItemDTO],
+    *,
+    miniapp_url: str | None = None,
 ) -> InlineKeyboardMarkup:
     rows = [
         [
@@ -47,6 +53,8 @@ def build_purchased_lecture_keyboard(
         ]
         for item in content_items
     ]
+    if miniapp_url and _is_web_app_url(miniapp_url):
+        rows.append([_miniapp_button(miniapp_url)])
     rows.append(
         [
             InlineKeyboardButton(
@@ -66,3 +74,14 @@ def _content_type_title(item: ContentItemDTO) -> str:
         "image": "Изображение:",
         "text": "Текст:",
     }.get(item.type.value, "Материал:")
+
+
+def _is_web_app_url(url: str) -> bool:
+    return url.startswith("https://")
+
+
+def _miniapp_button(url: str) -> InlineKeyboardButton:
+    return InlineKeyboardButton(
+        text="Открыть приложение",
+        web_app=WebAppInfo(url=url),
+    )

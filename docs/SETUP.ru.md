@@ -30,6 +30,8 @@ cp .env.example .env
 | `APP_SECRET_KEY` | Секрет signed admin session cookie. |
 | `BASE_URL` | Публичный URL web-сервиса. |
 | `ALLOWED_HOSTS` | Разрешенные HTTP Host заголовки для web-сервиса. |
+| `MINIAPP_URL` | Публичный URL Telegram Mini App. По умолчанию: `<BASE_URL>/app`. |
+| `MINIAPP_INIT_DATA_MAX_AGE_SECONDS` | Максимальный возраст Telegram Mini App `initData`. |
 | `BOT_TOKEN` | Токен Telegram-бота. |
 | `ADMIN_TELEGRAM_IDS` | Telegram ID администраторов через запятую. |
 | `DATABASE_*` | Настройки PostgreSQL. |
@@ -139,6 +141,8 @@ APP_DEBUG=false
 APP_SECRET_KEY=<long-random-secret>
 BASE_URL=https://tracerxbrhd.ru
 ALLOWED_HOSTS=tracerxbrhd.ru,www.tracerxbrhd.ru,api.tracerxbrhd.ru,localhost,127.0.0.1
+MINIAPP_URL=https://tracerxbrhd.ru/app
+MINIAPP_INIT_DATA_MAX_AGE_SECONDS=86400
 BOT_TOKEN=<telegram-bot-token>
 DATABASE_PASSWORD=<strong-db-password>
 WEB_BIND_HOST=127.0.0.1

@@ -87,6 +87,8 @@ APP_LOG_LEVEL=INFO
 APP_SECRET_KEY=<long-random-secret>
 BASE_URL=https://tracerxbrhd.ru
 ALLOWED_HOSTS=tracerxbrhd.ru,www.tracerxbrhd.ru,api.tracerxbrhd.ru,localhost,127.0.0.1
+MINIAPP_URL=https://tracerxbrhd.ru/app
+MINIAPP_INIT_DATA_MAX_AGE_SECONDS=86400
 
 BOT_TOKEN=<telegram-bot-token>
 ADMIN_TELEGRAM_IDS=<telegram-admin-id>
@@ -202,6 +204,32 @@ https://api.tracerxbrhd.ru/payments/webhooks/yookassa
 ```
 
 Если используете `api.tracerxbrhd.ru` для webhook, укажите тот же URL в кабинете YooKassa. Приложение принимает оба домена, потому что они проксируются на один FastAPI service.
+
+## Telegram Mini App
+
+Production URL:
+
+```text
+https://tracerxbrhd.ru/app
+```
+
+Проверка backend endpoints:
+
+```bash
+curl -I https://tracerxbrhd.ru/app
+curl -f https://tracerxbrhd.ru/miniapp/api/meta
+curl -i https://tracerxbrhd.ru/miniapp/api/auth/me
+```
+
+`/miniapp/api/auth/me` без Telegram `X-Telegram-Init-Data` должен возвращать `401`.
+
+В BotFather настройте Main Mini App / домен бота:
+
+```text
+tracerxbrhd.ru
+```
+
+После деплоя бот сам пытается установить Telegram menu button через Bot API.
 
 ## Проверка После Деплоя
 

@@ -33,7 +33,6 @@ async def start_command(message: Message, session: AsyncSession) -> None:
 
     await message.answer(
         "Здравствуйте! Это бот для доступа к лекциям и обучающим материалам по фармакологии.\n\n"
-        "Выберите раздел в главном меню.",
+        "Выберите раздел в главном меню или откройте приложение.",
         reply_markup=build_main_menu_keyboard(),
     )
-

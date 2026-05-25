@@ -29,6 +29,12 @@ class SupportService:
         )
         return self._to_dto(request)
 
+    async def list_user_requests(self, user_id: int) -> list[SupportRequestDTO]:
+        return [
+            self._to_dto(request)
+            for request in await self._repository.list_by_user(user_id)
+        ]
+
     @staticmethod
     def _to_dto(request: SupportRequest) -> SupportRequestDTO:
         return SupportRequestDTO(

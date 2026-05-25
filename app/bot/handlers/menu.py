@@ -17,6 +17,7 @@ from app.bot.keyboards.purchases import (
 )
 from app.bot.constants import (
     MAIN_MENU_ABOUT,
+    MAIN_MENU_MINIAPP,
     MAIN_MENU_PURCHASES,
 )
 from app.bot.keyboards.main_menu import build_main_menu_keyboard
@@ -45,7 +46,10 @@ async def show_purchases(message: Message, session: AsyncSession) -> None:
     await message.answer(
         _render_purchased_lectures(lectures),
         reply_markup=(
-            build_purchased_lectures_keyboard(lectures)
+            build_purchased_lectures_keyboard(
+                lectures,
+                miniapp_url=get_settings().effective_miniapp_url,
+            )
             if lectures
             else build_main_menu_keyboard()
         ),
@@ -62,7 +66,14 @@ async def show_purchases_callback(callback: CallbackQuery, session: AsyncSession
 
     await callback.message.edit_text(
         _render_purchased_lectures(lectures),
-        reply_markup=build_purchased_lectures_keyboard(lectures) if lectures else None,
+        reply_markup=(
+            build_purchased_lectures_keyboard(
+                lectures,
+                miniapp_url=get_settings().effective_miniapp_url,
+            )
+            if lectures
+            else None
+        ),
     )
     await callback.answer()
 
@@ -92,7 +103,10 @@ async def show_purchased_lecture(callback: CallbackQuery, session: AsyncSession)
 
     await callback.message.edit_text(
         _render_purchased_lecture(lecture, content_items),
-        reply_markup=build_purchased_lecture_keyboard(content_items),
+        reply_markup=build_purchased_lecture_keyboard(
+            content_items,
+            miniapp_url=get_settings().effective_miniapp_url,
+        ),
     )
     await callback.answer()
 
@@ -290,6 +304,16 @@ class ContentDeliveryError(Exception):
 async def about_project(message: Message) -> None:
     await message.answer(
         "Проект предназначен для доступа к лекциям и обучающим материалам по фармакологии. "
-        "Покупка, выдача материалов и поддержка будут подключаться поэтапно.",
+        "Покупка, выдача материалов и поддержка доступны в боте и будут дублироваться "
+        "в Telegram Mini App.",
+        reply_markup=build_main_menu_keyboard(),
+    )
+
+
+@router.message(F.text == MAIN_MENU_MINIAPP)
+async def miniapp_fallback(message: Message) -> None:
+    await message.answer(
+        "Откройте приложение по кнопке в главном меню или по ссылке:\n"
+        f"{get_settings().effective_miniapp_url}",
         reply_markup=build_main_menu_keyboard(),
     )

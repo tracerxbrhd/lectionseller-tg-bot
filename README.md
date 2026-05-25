@@ -119,6 +119,7 @@ Web-admin panel позволяет управлять проектом без р
 
 - [Инструкции по запуску и деплою](docs/SETUP.ru.md)
 - [Production-деплой для tracerxbrhd.ru](docs/DEPLOY.tracerxbrhd.ru.md)
+- [План Telegram Mini App](docs/MINIAPP_PLAN.ru.md)
 - [Инструкции по запуску и деплою на английском](docs/SETUP.en.md)
 
 ## Лицензия

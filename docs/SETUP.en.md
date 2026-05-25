@@ -24,6 +24,8 @@ Main variables:
 | `APP_SECRET_KEY` | Secret for signed admin session cookies. |
 | `BASE_URL` | Public web service URL. |
 | `ALLOWED_HOSTS` | Allowed HTTP Host headers for the web service. |
+| `MINIAPP_URL` | Public Telegram Mini App URL. Default: `<BASE_URL>/app`. |
+| `MINIAPP_INIT_DATA_MAX_AGE_SECONDS` | Maximum age of Telegram Mini App `initData`. |
 | `BOT_TOKEN` | Telegram bot token. |
 | `ADMIN_TELEGRAM_IDS` | Comma-separated Telegram admin IDs. |
 | `DATABASE_*` | PostgreSQL settings. |
@@ -133,6 +135,8 @@ APP_DEBUG=false
 APP_SECRET_KEY=<long-random-secret>
 BASE_URL=https://tracerxbrhd.ru
 ALLOWED_HOSTS=tracerxbrhd.ru,www.tracerxbrhd.ru,api.tracerxbrhd.ru,localhost,127.0.0.1
+MINIAPP_URL=https://tracerxbrhd.ru/app
+MINIAPP_INIT_DATA_MAX_AGE_SECONDS=86400
 BOT_TOKEN=<telegram-bot-token>
 DATABASE_PASSWORD=<strong-db-password>
 WEB_BIND_HOST=127.0.0.1

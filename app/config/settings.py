@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     app_secret_key: SecretStr = Field(default=SecretStr("change-me-only-for-local"))
     base_url: str = "http://localhost:8000"
     allowed_hosts: str = "localhost,127.0.0.1"
+    miniapp_url: str | None = None
+    miniapp_init_data_max_age_seconds: int = 60 * 60 * 24
 
     bot_token: SecretStr | None = None
     admin_telegram_ids: str = ""
@@ -67,7 +69,7 @@ class Settings(BaseSettings):
             return None
         return value
 
-    @field_validator("yookassa_shop_id", mode="before")
+    @field_validator("miniapp_url", "yookassa_shop_id", mode="before")
     @classmethod
     def empty_string_to_none(cls, value: object) -> object:
         if value == "":
@@ -110,6 +112,12 @@ class Settings(BaseSettings):
         if not self.allowed_hosts:
             return []
         return [item.strip() for item in self.allowed_hosts.split(",") if item.strip()]
+
+    @property
+    def effective_miniapp_url(self) -> str:
+        if self.miniapp_url:
+            return self.miniapp_url
+        return f"{self.base_url.rstrip('/')}/app"
 
 
 @lru_cache(maxsize=1)

@@ -119,6 +119,7 @@ Business logic is kept separate from Telegram handlers and web routes. This impr
 
 - [Russian setup and deployment guide](docs/SETUP.ru.md)
 - [Production deployment for tracerxbrhd.ru](docs/DEPLOY.tracerxbrhd.ru.md)
+- [Telegram Mini App plan](docs/MINIAPP_PLAN.ru.md)
 - [Setup and deployment guide](docs/SETUP.en.md)
 
 ## License

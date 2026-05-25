@@ -43,6 +43,8 @@ async def run_bot() -> None:
     from aiogram import Bot
     from aiogram.client.default import DefaultBotProperties
     from aiogram.enums import ParseMode
+    from aiogram.exceptions import TelegramAPIError
+    from aiogram.types import MenuButtonWebApp, WebAppInfo
 
     from app.bot.dispatcher import create_dispatcher
     from app.config.settings import get_settings
@@ -58,6 +60,16 @@ async def run_bot() -> None:
         default=DefaultBotProperties(parse_mode=ParseMode.HTML),
     )
     dispatcher = create_dispatcher(async_session_factory)
+    if settings.effective_miniapp_url.startswith("https://"):
+        try:
+            await bot.set_chat_menu_button(
+                menu_button=MenuButtonWebApp(
+                    text="Открыть приложение",
+                    web_app=WebAppInfo(url=settings.effective_miniapp_url),
+                ),
+            )
+        except TelegramAPIError:
+            logger.exception("Could not set Telegram Mini App menu button.")
 
     logger.info("Starting Telegram bot polling.")
     try:

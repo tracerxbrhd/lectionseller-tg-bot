@@ -1,3 +1,14 @@
+FROM node:20-alpine AS miniapp-builder
+
+WORKDIR /build/frontend/miniapp
+
+COPY frontend/miniapp/package*.json ./
+RUN if [ -f package-lock.json ]; then npm ci; else npm install --package-lock=false; fi
+
+COPY frontend/miniapp/ ./
+RUN npm run build
+
+
 FROM python:3.12-slim AS runtime
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -15,6 +26,7 @@ COPY pyproject.toml ./
 COPY alembic.ini ./
 COPY app ./app
 COPY alembic ./alembic
+COPY --from=miniapp-builder /build/frontend/miniapp/dist ./frontend/miniapp/dist
 
 RUN pip install --upgrade pip \
     && pip install .

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.common.enums import SupportRequestStatus
@@ -24,3 +25,11 @@ class SupportRepository:
         self._session.add(request)
         await self._session.flush()
         return request
+
+    async def list_by_user(self, user_id: int) -> list[SupportRequest]:
+        result = await self._session.execute(
+            select(SupportRequest)
+            .where(SupportRequest.user_id == user_id)
+            .order_by(SupportRequest.created_at.desc(), SupportRequest.id.desc()),
+        )
+        return list(result.scalars().all())
