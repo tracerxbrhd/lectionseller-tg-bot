@@ -13,10 +13,10 @@ def payment_check_callback(purchase_id: int) -> str:
 def build_payment_keyboard(confirmation_url: str, purchase_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="Оплатить", url=confirmation_url)],
+            [InlineKeyboardButton(text="Перейти к оплате", url=confirmation_url)],
             [
                 InlineKeyboardButton(
-                    text="Проверить оплату",
+                    text="Проверить статус оплаты",
                     callback_data=payment_check_callback(purchase_id),
                 ),
             ],

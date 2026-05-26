@@ -144,7 +144,7 @@ async def send_purchased_content(callback: CallbackQuery, session: AsyncSession)
         content_item.id,
         user.id,
     )
-    await callback.answer("Материал отправлен.")
+    await callback.answer("Материал отправлен. Проверьте новое сообщение.")
 
 
 def _library_service(session: AsyncSession) -> ContentLibraryService:
@@ -174,14 +174,21 @@ def _render_purchased_lectures(lectures: list[PurchasedLectureDTO]) -> str:
     if not lectures:
         return (
             "<b>Мои покупки</b>\n\n"
-            "У вас пока нет купленных лекций. Откройте каталог и выберите материал."
+            "Купленных лекций пока нет.\n\n"
+            "Откройте каталог, выберите лекцию или блок и оплатите доступ. "
+            "После подтверждения оплаты материалы появятся здесь автоматически."
         )
 
     lines = [
         f"• {escape(lecture.title)} — {_format_date(lecture.purchased_at)}"
         for lecture in lectures
     ]
-    return "<b>Мои покупки</b>\n\nВыберите лекцию:\n" + "\n".join(lines)
+    return (
+        "<b>Мои покупки</b>\n\n"
+        "Ниже список лекций, к которым у вас открыт доступ. "
+        "Выберите лекцию, чтобы открыть материалы.\n\n"
+        + "\n".join(lines)
+    )
 
 
 def _render_purchased_lecture(
@@ -190,15 +197,15 @@ def _render_purchased_lecture(
 ) -> str:
     parts = [
         f"<b>{escape(lecture.title)}</b>",
-        f"Дата покупки: {_format_date(lecture.purchased_at)}",
+        f"<b>Доступ открыт:</b> {_format_date(lecture.purchased_at)}",
     ]
     if lecture.short_description:
         parts.append(escape(lecture.short_description))
 
     if content_items:
-        parts.append("Материалы доступны по кнопкам ниже.")
+        parts.append("<b>Материалы доступны.</b> Выберите нужный файл или текст ниже.")
     else:
-        parts.append("Материалы для этой лекции пока не добавлены.")
+        parts.append("<b>Материалы пока не добавлены.</b> Доступ сохранен и останется активным.")
 
     return "\n\n".join(parts)
 
@@ -303,9 +310,14 @@ class ContentDeliveryError(Exception):
 @router.message(F.text == MAIN_MENU_ABOUT)
 async def about_project(message: Message) -> None:
     await message.answer(
-        "Проект предназначен для доступа к лекциям и обучающим материалам по фармакологии. "
-        "Покупка, выдача материалов и поддержка доступны в боте и будут дублироваться "
-        "в Telegram Mini App.",
+        "<b>О проекте</b>\n\n"
+        "LectionSeller помогает получать доступ к лекциям и обучающим материалам "
+        "по фармакологии прямо в Telegram.\n\n"
+        "<b>Как это работает:</b>\n"
+        "- выбираете лекцию или блок в каталоге;\n"
+        "- оплачиваете доступ через YooKassa;\n"
+        "- открываете купленные материалы в разделе «Мои покупки».\n\n"
+        "<b>Важно:</b> материалы выдаются только после проверки доступа.",
         reply_markup=build_main_menu_keyboard(),
     )
 
@@ -313,7 +325,8 @@ async def about_project(message: Message) -> None:
 @router.message(F.text == MAIN_MENU_MINIAPP)
 async def miniapp_fallback(message: Message) -> None:
     await message.answer(
-        "Откройте приложение по кнопке в главном меню или по ссылке:\n"
+        "<b>Telegram Mini App</b>\n\n"
+        "Откройте приложение через кнопку в главном меню или по ссылке:\n"
         f"{get_settings().effective_miniapp_url}",
         reply_markup=build_main_menu_keyboard(),
     )

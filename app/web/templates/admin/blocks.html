@@ -1,8 +1,11 @@
 {% extends "admin/base.html" %}
 {% block title %}Блоки{% endblock %}
 {% block content %}
-<div class="actions">
-  <h1>Блоки</h1>
+<div class="page-header">
+  <div class="page-title">
+    <h1>Блоки</h1>
+    <p>Пакеты лекций внутри разделов. Блок можно продавать целиком.</p>
+  </div>
   <a class="button" href="/admin/blocks/new">Добавить блок</a>
 </div>
 <table>
@@ -12,12 +15,12 @@
     <td>{{ block.id }}</td>
     <td>{{ section.title }}</td>
     <td>
-      <strong>{{ block.title }}</strong>
-      {% if block.description %}<div class="muted">{{ block.description }}</div>{% endif %}
+      <span class="entity-title">{{ block.title }}</span>
+      {% if block.description %}<div class="entity-subtitle">{{ block.description }}</div>{% endif %}
     </td>
-    <td>{{ block.price }}</td>
+    <td><span class="money">{{ block.price }} ₽</span></td>
     <td>{{ block.sort_order }}</td>
-    <td>{{ "да" if block.is_active else "нет" }}</td>
+    <td><span class="badge {{ 'success' if block.is_active else 'neutral' }}">{{ "активен" if block.is_active else "скрыт" }}</span></td>
     <td class="actions">
       <a class="button secondary" href="/admin/blocks/{{ block.id }}/edit">Редактировать</a>
       <form method="post" action="/admin/blocks/{{ block.id }}/delete">
@@ -26,7 +29,7 @@
     </td>
   </tr>
   {% else %}
-  <tr><td colspan="7" class="muted">Блоков пока нет.</td></tr>
+  <tr><td colspan="7" class="empty-state">Блоков пока нет.</td></tr>
   {% endfor %}
 </table>
 {% endblock %}

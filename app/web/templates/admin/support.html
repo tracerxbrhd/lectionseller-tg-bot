@@ -1,14 +1,19 @@
 {% extends "admin/base.html" %}
 {% block title %}Поддержка{% endblock %}
 {% block content %}
-<h1>Обращения в поддержку</h1>
+<div class="page-header">
+  <div class="page-title">
+    <h1>Обращения в поддержку</h1>
+    <p>Вопросы пользователей по оплатам, доступам и загруженным материалам.</p>
+  </div>
+</div>
 <table>
   <tr><th>ID</th><th>Пользователь</th><th>Сообщение</th><th>Статус</th><th>Создано</th></tr>
   {% for support_request, user in rows %}
   <tr>
     <td>{{ support_request.id }}</td>
     <td>{{ user.telegram_id }} {% if user.username %}(@{{ user.username }}){% endif %}</td>
-    <td>{{ support_request.message }}</td>
+    <td><div class="entity-subtitle">{{ support_request.message }}</div></td>
     <td>
       <form method="post" action="/admin/support/{{ support_request.id }}/status">
         <select name="status">
@@ -22,7 +27,7 @@
     <td>{{ support_request.created_at }}</td>
   </tr>
   {% else %}
-  <tr><td colspan="5" class="muted">Обращений пока нет.</td></tr>
+  <tr><td colspan="5" class="empty-state">Обращений пока нет.</td></tr>
   {% endfor %}
 </table>
 {% endblock %}

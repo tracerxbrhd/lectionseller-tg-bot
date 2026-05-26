@@ -1,7 +1,12 @@
 {% extends "admin/base.html" %}
 {% block title %}Пользователи{% endblock %}
 {% block content %}
-<h1>Пользователи</h1>
+<div class="page-header">
+  <div class="page-title">
+    <h1>Пользователи</h1>
+    <p>Аккаунты Telegram-пользователей, блокировки и права администратора.</p>
+  </div>
+</div>
 <table>
   <tr><th>ID</th><th>Telegram</th><th>Имя</th><th>Username</th><th>Создан</th><th>Blocked</th><th>Admin</th><th></th></tr>
   {% for user in users %}
@@ -11,8 +16,8 @@
     <td>{{ user.first_name or "" }} {{ user.last_name or "" }}</td>
     <td>{{ user.username or "" }}</td>
     <td>{{ user.created_at }}</td>
-    <td>{{ "да" if user.is_blocked else "нет" }}</td>
-    <td>{{ "да" if user.is_admin else "нет" }}</td>
+    <td><span class="badge {{ 'danger' if user.is_blocked else 'success' }}">{{ "blocked" if user.is_blocked else "active" }}</span></td>
+    <td><span class="badge {{ 'success' if user.is_admin else 'neutral' }}">{{ "admin" if user.is_admin else "user" }}</span></td>
     <td class="actions">
       <form method="post" action="/admin/users/{{ user.id }}/toggle-block">
         <button class="secondary" type="submit">{{ "Разблокировать" if user.is_blocked else "Заблокировать" }}</button>
@@ -23,7 +28,7 @@
     </td>
   </tr>
   {% else %}
-  <tr><td colspan="8" class="muted">Пользователей пока нет.</td></tr>
+  <tr><td colspan="8" class="empty-state">Пользователей пока нет.</td></tr>
   {% endfor %}
 </table>
 {% endblock %}

@@ -36,7 +36,7 @@ def build_main_menu_keyboard() -> ReplyKeyboardMarkup:
             ],
         ],
         resize_keyboard=True,
-        input_field_placeholder="Выберите раздел",
+        input_field_placeholder="Выберите действие",
     )
 
 

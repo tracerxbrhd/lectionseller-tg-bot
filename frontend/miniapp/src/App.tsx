@@ -63,29 +63,38 @@ export default function App() {
   });
 
   return (
-    <div className="min-h-screen bg-app-bg text-app-text">
+    <div className="app-shell min-h-screen text-app-text">
       <main className="mx-auto flex min-h-screen w-full max-w-xl flex-col pb-24">
-        <header className="px-4 pb-3 pt-safe-top">
-          <div className="flex items-center justify-between gap-3 py-4">
-            <div>
-              <p className="text-sm text-app-muted">Фармакология</p>
-              <h1 className="text-2xl font-semibold tracking-normal">Здравствуйте, {userName}</h1>
+        <header className="px-4 pb-4 pt-safe-top">
+          <div className="hero-card">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium text-app-accent-strong">Фармакология</p>
+                <h1 className="mt-1 text-2xl font-semibold tracking-normal">
+                  Здравствуйте, {userName}
+                </h1>
+                <p className="mt-1 text-sm leading-5 text-app-muted">
+                  Лекции, покупки и материалы доступны внутри защищенного приложения.
+                </p>
+              </div>
+              <div
+                className={
+                  "section-icon flex h-12 w-12 shrink-0 items-center justify-center " +
+                  "rounded-lg text-app-accent shadow-soft"
+                }
+              >
+                <GraduationCap size={23} />
+              </div>
             </div>
-            <div
-              className={
-                "flex h-11 w-11 items-center justify-center rounded-lg " +
-                "bg-app-accent text-white shadow-soft"
-              }
-            >
-              <GraduationCap size={22} />
+
+            <div className="mt-4">
+              <StatusStrip
+                isLoading={metaQuery.isLoading}
+                isError={metaQuery.isError}
+                apiVersion={metaQuery.data?.api_version}
+              />
             </div>
           </div>
-
-          <StatusStrip
-            isLoading={metaQuery.isLoading}
-            isError={metaQuery.isError}
-            apiVersion={metaQuery.data?.api_version}
-          />
         </header>
 
         <section className="flex-1 px-4">
@@ -97,8 +106,7 @@ export default function App() {
 
         <nav
           className={
-            "fixed inset-x-0 bottom-0 border-t border-app-border " +
-            "bg-app-panel px-3 pb-safe-bottom pt-2"
+            "bottom-nav fixed inset-x-0 bottom-0 px-3 pb-safe-bottom pt-2"
           }
         >
           <div className="mx-auto grid max-w-xl grid-cols-4 gap-1">
@@ -117,7 +125,7 @@ export default function App() {
                     "flex min-h-14 flex-col items-center justify-center gap-1 " +
                     "rounded-lg px-2 text-xs transition " +
                     (isActive
-                      ? "bg-app-accent text-white"
+                      ? "primary-action text-white"
                       : "text-app-muted hover:bg-app-bg hover:text-app-text"
                     )
                   }
@@ -232,8 +240,8 @@ function CatalogScreen() {
           type="button"
           onClick={goBack}
           className={
-            "flex items-center gap-2 rounded-lg border border-app-border " +
-            "bg-app-panel px-3 py-2 text-sm text-app-muted"
+            "secondary-action flex items-center gap-2 rounded-lg px-3 py-2 " +
+            "text-sm font-medium"
           }
         >
           <ArrowLeft size={17} />
@@ -413,8 +421,8 @@ function PurchasesScreen() {
           type="button"
           onClick={goBack}
           className={
-            "flex items-center gap-2 rounded-lg border border-app-border " +
-            "bg-app-panel px-3 py-2 text-sm text-app-muted"
+            "secondary-action flex items-center gap-2 rounded-lg px-3 py-2 " +
+            "text-sm font-medium"
           }
         >
           <ArrowLeft size={17} />
@@ -513,7 +521,7 @@ function SupportScreen() {
         subtitle="Напишите вопрос по оплате, доступу или материалам."
       />
 
-      <div className="rounded-lg border border-app-border bg-app-panel p-4 shadow-soft">
+      <div className="surface-card p-4">
         <label className="text-sm font-medium" htmlFor="support-preview">
           Вопрос
         </label>
@@ -522,8 +530,8 @@ function SupportScreen() {
           value={message}
           onChange={(event) => setMessage(event.target.value)}
           className={
-            "mt-2 min-h-32 w-full resize-none rounded-lg border border-app-border " +
-            "bg-app-bg p-3 text-sm outline-none focus:border-app-accent"
+            "soft-input mt-2 min-h-32 w-full resize-none rounded-lg " +
+            "border border-app-border p-3 text-sm outline-none focus:border-app-accent"
           }
           placeholder="Напишите вопрос по оплате, доступу или материалам"
           maxLength={4000}
@@ -537,9 +545,8 @@ function SupportScreen() {
           type="button"
           onClick={submitSupportRequest}
           className={
-            "mt-3 flex w-full items-center justify-center gap-2 rounded-lg " +
-            "bg-app-accent px-4 py-3 text-sm font-semibold " +
-            "text-white disabled:opacity-70"
+            "primary-action mt-3 flex w-full items-center justify-center gap-2 " +
+            "rounded-lg px-4 py-3 text-sm font-semibold disabled:opacity-70"
           }
           disabled={!canSubmit}
         >
@@ -582,7 +589,7 @@ function SupportScreen() {
 
 function SupportRequestCard({ request }: { request: SupportRequest }) {
   return (
-    <article className="rounded-lg border border-app-border bg-app-panel p-4 shadow-soft">
+    <article className="surface-card p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm text-app-muted">
@@ -661,7 +668,7 @@ function SectionCard({ section, onOpen }: { section: Section; onOpen: () => void
     <button
       type="button"
       onClick={onOpen}
-      className="rounded-lg border border-app-border bg-app-panel p-4 text-left shadow-soft"
+      className="surface-card interactive p-4 text-left"
     >
       <h3 className="text-lg font-semibold">{section.title}</h3>
       <p className="mt-1 text-sm leading-5 text-app-muted">
@@ -683,7 +690,7 @@ function BlockCard({
   onBuy: () => void;
 }) {
   return (
-    <article className="rounded-lg border border-app-border bg-app-panel p-4 shadow-soft">
+    <article className="surface-card p-4">
       <button type="button" onClick={onOpen} className="w-full text-left">
         <span
           className={
@@ -718,7 +725,7 @@ function LectureCard({
   onBuy: () => void;
 }) {
   return (
-    <article className="rounded-lg border border-app-border bg-app-panel p-4 shadow-soft">
+    <article className="surface-card p-4">
       <span
         className={
           "rounded-full bg-app-bg px-2.5 py-1 text-xs font-medium " +
@@ -764,7 +771,7 @@ function ProductAction({
       className={
         "mt-4 flex w-full items-center justify-center gap-2 rounded-lg " +
         "px-4 py-3 text-sm font-semibold " +
-        (owned ? "bg-app-bg text-app-accent-strong" : "bg-app-accent text-white")
+        (owned ? "secondary-action" : "primary-action")
       }
       disabled={owned || isLoading}
     >
@@ -799,7 +806,7 @@ function PaymentPanel({
       : "neutral";
 
   return (
-    <article className="rounded-lg border border-app-border bg-app-panel p-4 shadow-soft">
+    <article className="surface-card p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm text-app-muted">Покупка #{payment.purchase.id}</p>
@@ -810,7 +817,7 @@ function PaymentPanel({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-lg bg-app-bg px-3 py-2 text-sm text-app-muted"
+          className="secondary-action rounded-lg px-3 py-2 text-sm font-medium"
         >
           Скрыть
         </button>
@@ -831,7 +838,7 @@ function PaymentPanel({
           <button
             type="button"
             onClick={onOpenPayment}
-            className="rounded-lg bg-app-accent px-4 py-3 text-sm font-semibold text-white"
+            className="primary-action rounded-lg px-4 py-3 text-sm font-semibold"
           >
             Открыть оплату
           </button>
@@ -841,8 +848,8 @@ function PaymentPanel({
           onClick={onCheckPayment}
           disabled={isChecking}
           className={
-            "rounded-lg border border-app-border bg-app-bg px-4 py-3 " +
-            "text-sm font-semibold text-app-accent-strong disabled:opacity-70"
+            "secondary-action rounded-lg px-4 py-3 text-sm font-semibold " +
+            "disabled:opacity-70"
           }
         >
           {isChecking ? "Проверяем..." : "Проверить оплату"}
@@ -865,8 +872,8 @@ function SectionTitle({
     <div className="flex items-start gap-3">
       <div
         className={
-          "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg " +
-          "bg-app-panel text-app-accent shadow-soft"
+          "section-icon flex h-10 w-10 shrink-0 items-center justify-center " +
+          "rounded-lg text-app-accent shadow-soft"
         }
       >
         <Icon size={20} />
@@ -890,7 +897,7 @@ function PurchasedLectureCard({
     <button
       type="button"
       onClick={onOpen}
-      className="rounded-lg border border-app-border bg-app-panel p-4 text-left shadow-soft"
+      className="surface-card interactive p-4 text-left"
     >
       <div className="flex items-start gap-3">
         <CheckCircle2 className="mt-1 shrink-0 text-app-accent" size={21} />
@@ -926,8 +933,7 @@ function MaterialRow({
       onClick={onOpen}
       disabled={item.delivery_method === "unavailable" || isLoading}
       className={
-        "flex items-center gap-3 rounded-lg border border-app-border " +
-        "bg-app-panel p-4 text-left shadow-soft disabled:opacity-60"
+        "surface-card flex items-center gap-3 p-4 text-left disabled:opacity-60"
       }
     >
       <div
@@ -958,7 +964,7 @@ function ContentViewer({
   isLoading: boolean;
 }) {
   return (
-    <article className="rounded-lg border border-app-border bg-app-panel p-4 shadow-soft">
+    <article className="surface-card p-4">
       <h3 className="font-semibold">{item.title}</h3>
       <p className="mt-1 text-sm text-app-muted">{contentNote(item)}</p>
 
@@ -1017,7 +1023,7 @@ function AdminQueueCard({
   note: string;
 }) {
   return (
-    <article className="rounded-lg border border-app-border bg-app-panel p-4 shadow-soft">
+    <article className="surface-card p-4">
       <p className="text-sm text-app-muted">{title}</p>
       <p className="mt-2 text-3xl font-semibold">{value}</p>
       <p className="mt-1 text-sm text-app-muted">{note}</p>
@@ -1027,7 +1033,7 @@ function AdminQueueCard({
 
 function SkeletonCard() {
   return (
-    <div className="rounded-lg border border-app-border bg-app-panel p-4 shadow-soft">
+    <div className="surface-card p-4">
       <div className="h-4 w-24 rounded bg-app-bg" />
       <div className="mt-3 h-5 w-2/3 rounded bg-app-bg" />
       <div className="mt-2 h-4 w-full rounded bg-app-bg" />
@@ -1037,14 +1043,24 @@ function SkeletonCard() {
 }
 
 function InfoLine({ text, tone }: { text: string; tone: "neutral" | "success" | "warning" }) {
-  const toneClass =
-    tone === "success"
-      ? "border-app-accent text-app-accent-strong"
-      : "border-app-border text-app-muted";
+  const toneClass = {
+    neutral: "status-line--neutral",
+    success: "status-line--success",
+    warning: "status-line--warning",
+  }[tone];
+  const title = {
+    neutral: "Информация",
+    success: "Готово",
+    warning: "Важно",
+  }[tone];
 
   return (
-    <div className={`rounded-lg border bg-app-panel px-3 py-2 text-sm ${toneClass}`}>
-      {text}
+    <div className={`status-line ${toneClass}`}>
+      <span className="status-marker" />
+      <span>
+        <strong>{title}</strong>
+        {text}
+      </span>
     </div>
   );
 }
@@ -1061,7 +1077,7 @@ function catalogSubtitle(section: Section | null, block: Block | null): string {
 
 function productActionText(price: string, isLoading: boolean): string {
   if (isLoading) {
-    return "Создаем оплату...";
+    return "Готовим оплату...";
   }
   return `Купить за ${formatPrice(price)}`;
 }
@@ -1074,20 +1090,20 @@ function paymentPanelText(
     return paymentCheckText(checkResult);
   }
   if (payment.payment_error) {
-    return "Не удалось создать ссылку оплаты. Попробуйте позже или напишите в поддержку.";
+    return "Платежная ссылка не создана. Попробуйте позже или напишите в поддержку.";
   }
   if (!payment.confirmation_url) {
-    return "Покупка создана, но ссылка оплаты пока недоступна.";
+    return "Покупка создана. Платежная ссылка пока недоступна.";
   }
-  return "Ссылка оплаты готова. После YooKassa вернитесь сюда и проверьте оплату.";
+  return "Ссылка готова. Оплатите заказ в YooKassa, затем вернитесь и проверьте статус.";
 }
 
 function paymentCheckText(result: CheckPaymentResponse): string {
   if (result.is_paid) {
-    return "Оплата подтверждена. Доступ будет доступен в разделе покупок.";
+    return "Оплата подтверждена. Материалы уже доступны в разделе покупок.";
   }
   if (result.payment_status === "pending" || result.payment_status === "waiting_for_capture") {
-    return "YooKassa пока не подтвердила оплату. Проверьте еще раз через несколько секунд.";
+    return "YooKassa еще обрабатывает платеж. Проверьте статус через несколько секунд.";
   }
   if (result.payment_status === "canceled") {
     return "Платеж отменен. Можно создать новую покупку.";

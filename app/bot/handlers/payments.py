@@ -103,23 +103,43 @@ async def _answer_payment_check(
         await callback.answer("Оплата подтверждена, доступ открыт.", show_alert=True)
         if callback.message is not None:
             await callback.message.answer(
-                "Оплата подтверждена. Материалы доступны в разделе «Мои покупки».",
+                "<b>Статус оплаты:</b> <code>ПОДТВЕРЖДЕНА</code>\n\n"
+                "Доступ открыт. Материалы уже доступны в разделе «Мои покупки».",
                 reply_markup=build_main_menu_keyboard(),
             )
         return
 
     if result.status in {PaymentStatus.PENDING, PaymentStatus.WAITING_FOR_CAPTURE}:
         await callback.answer(
-            "YooKassa пока не подтвердила оплату. Проверьте ещё раз через несколько секунд.",
+            "Платеж еще обрабатывается. Проверьте статус чуть позже.",
             show_alert=True,
         )
+        if callback.message is not None:
+            await callback.message.answer(
+                "<b>Статус оплаты:</b> <code>ОБРАБАТЫВАЕТСЯ</code>\n\n"
+                "YooKassa еще не подтвердила платеж. Обычно это занимает несколько секунд. "
+                "Нажмите «Проверить статус оплаты» повторно чуть позже.",
+            )
         return
 
     if result.status == PaymentStatus.CANCELED:
-        await callback.answer("Платёж отменён. Можно создать новую покупку.", show_alert=True)
+        await callback.answer("Платёж отменён.", show_alert=True)
+        if callback.message is not None:
+            await callback.message.answer(
+                "<b>Статус оплаты:</b> <code>ОТМЕНЕНА</code>\n\n"
+                "Платеж отменен. Можно вернуться в каталог и создать новую покупку.",
+                reply_markup=build_main_menu_keyboard(),
+            )
         return
 
-    await callback.answer("Платёж не прошёл. Попробуйте оплатить заново.", show_alert=True)
+    await callback.answer("Платёж не прошёл.", show_alert=True)
+    if callback.message is not None:
+        await callback.message.answer(
+            "<b>Статус оплаты:</b> <code>НЕ ПРОШЛА</code>\n\n"
+            "Оплата не была подтверждена. Попробуйте создать покупку заново "
+            "или напишите в поддержку.",
+            reply_markup=build_main_menu_keyboard(),
+        )
 
 
 def _last_int(value: str | None) -> int | None:

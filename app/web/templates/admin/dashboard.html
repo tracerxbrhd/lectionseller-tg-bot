@@ -1,20 +1,32 @@
 {% extends "admin/base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-<h1>Dashboard</h1>
+<div class="page-header">
+  <div class="page-title">
+    <h1>Dashboard</h1>
+    <p>Ключевые показатели каталога, продаж и обращений в одном месте.</p>
+  </div>
+  <a class="button secondary" href="/admin/support">Открыть поддержку</a>
+</div>
 <section class="grid">
-  <div class="stat"><span>Пользователи</span><strong>{{ stats.users }}</strong></div>
-  <div class="stat"><span>Разделы</span><strong>{{ stats.sections }}</strong></div>
-  <div class="stat"><span>Блоки</span><strong>{{ stats.blocks }}</strong></div>
-  <div class="stat"><span>Лекции</span><strong>{{ stats.lectures }}</strong></div>
-  <div class="stat"><span>Покупки</span><strong>{{ stats.purchases }}</strong></div>
-  <div class="stat"><span>Оплаченные</span><strong>{{ stats.paid_purchases }}</strong></div>
-  <div class="stat"><span>Выручка</span><strong>{{ stats.revenue }} ₽</strong></div>
-  <div class="stat"><span>Открытые обращения</span><strong>{{ stats.support_open }}</strong></div>
+  <div class="stat"><span>Пользователи</span><strong>{{ stats.users }}</strong><div class="stat-note">Всего зарегистрировано</div></div>
+  <div class="stat"><span>Разделы</span><strong>{{ stats.sections }}</strong><div class="stat-note">Структура каталога</div></div>
+  <div class="stat"><span>Блоки</span><strong>{{ stats.blocks }}</strong><div class="stat-note">Группы лекций</div></div>
+  <div class="stat"><span>Лекции</span><strong>{{ stats.lectures }}</strong><div class="stat-note">Карточки материалов</div></div>
+  <div class="stat"><span>Покупки</span><strong>{{ stats.purchases }}</strong><div class="stat-note">Все заявки</div></div>
+  <div class="stat"><span>Оплаченные</span><strong>{{ stats.paid_purchases }}</strong><div class="stat-note">Подтвержденные покупки</div></div>
+  <div class="stat"><span>Выручка</span><strong>{{ stats.revenue }} ₽</strong><div class="stat-note">Сумма оплаченных покупок</div></div>
+  <div class="stat"><span>Открытые обращения</span><strong>{{ stats.support_open }}</strong><div class="stat-note">Требуют внимания</div></div>
 </section>
 
 <section class="panel">
-  <h2>Последние покупки</h2>
+  <div class="panel-header">
+    <div>
+      <h2>Последние покупки</h2>
+      <p class="page-subtitle">Свежие заявки и их текущие статусы.</p>
+    </div>
+    <a href="/admin/purchases">Все покупки</a>
+  </div>
   <table>
     <tr><th>ID</th><th>Пользователь</th><th>Тип</th><th>Объект</th><th>Цена</th><th>Статус</th></tr>
     {% for purchase, user in latest_purchases %}
@@ -23,28 +35,42 @@
       <td>{{ user.telegram_id }}</td>
       <td>{{ purchase.purchase_type.value }}</td>
       <td>{{ purchase.object_id }}</td>
-      <td>{{ purchase.price }}</td>
-      <td>{{ purchase.status.value }}</td>
+      <td><span class="money">{{ purchase.price }} ₽</span></td>
+      <td>
+        <span class="badge {{ 'success' if purchase.status.value == 'paid' else 'warning' if purchase.status.value == 'pending' else 'danger' }}">
+          {{ purchase.status.value }}
+        </span>
+      </td>
     </tr>
     {% else %}
-    <tr><td colspan="6" class="muted">Покупок пока нет.</td></tr>
+    <tr><td colspan="6" class="empty-state">Покупок пока нет.</td></tr>
     {% endfor %}
   </table>
 </section>
 
 <section class="panel">
-  <h2>Последние обращения</h2>
+  <div class="panel-header">
+    <div>
+      <h2>Последние обращения</h2>
+      <p class="page-subtitle">Вопросы пользователей по оплате, доступам и материалам.</p>
+    </div>
+    <a href="/admin/support">Все обращения</a>
+  </div>
   <table>
     <tr><th>ID</th><th>Пользователь</th><th>Статус</th><th>Сообщение</th></tr>
     {% for request, user in latest_support %}
     <tr>
       <td>{{ request.id }}</td>
       <td>{{ user.telegram_id }}</td>
-      <td>{{ request.status.value }}</td>
+      <td>
+        <span class="badge {{ 'warning' if request.status.value == 'open' else 'success' if request.status.value == 'closed' else 'neutral' }}">
+          {{ request.status.value }}
+        </span>
+      </td>
       <td>{{ request.message }}</td>
     </tr>
     {% else %}
-    <tr><td colspan="4" class="muted">Обращений пока нет.</td></tr>
+    <tr><td colspan="4" class="empty-state">Обращений пока нет.</td></tr>
     {% endfor %}
   </table>
 </section>

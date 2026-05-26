@@ -1,7 +1,12 @@
 {% extends "admin/base.html" %}
 {% block title %}Доступы{% endblock %}
 {% block content %}
-<h1>Доступы</h1>
+<div class="page-header">
+  <div class="page-title">
+    <h1>Доступы</h1>
+    <p>Ручная выдача и отзыв доступа к материалам конкретных лекций.</p>
+  </div>
+</div>
 <section class="panel">
   <h2>Выдать доступ вручную</h2>
   <form method="post" action="/admin/access">
@@ -33,8 +38,8 @@
     <td>{{ "purchase #" ~ grant.source_purchase_id if grant.source_purchase_id else "manual" }}</td>
     <td>{{ grant.granted_at }}</td>
     <td>{{ grant.revoked_at or "" }}</td>
-    <td>{{ "да" if grant.is_active else "нет" }}</td>
-    <td>
+    <td><span class="badge {{ 'success' if grant.is_active else 'neutral' }}">{{ "active" if grant.is_active else "revoked" }}</span></td>
+    <td class="actions">
       {% if grant.is_active %}
       <form method="post" action="/admin/access/{{ grant.id }}/revoke">
         <button class="danger" type="submit">Отозвать</button>
@@ -43,7 +48,7 @@
     </td>
   </tr>
   {% else %}
-  <tr><td colspan="8" class="muted">Доступов пока нет.</td></tr>
+  <tr><td colspan="8" class="empty-state">Доступов пока нет.</td></tr>
   {% endfor %}
 </table>
 {% endblock %}

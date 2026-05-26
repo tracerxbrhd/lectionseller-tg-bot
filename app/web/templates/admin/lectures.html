@@ -1,8 +1,11 @@
 {% extends "admin/base.html" %}
 {% block title %}Лекции{% endblock %}
 {% block content %}
-<div class="actions">
-  <h1>Лекции</h1>
+<div class="page-header">
+  <div class="page-title">
+    <h1>Лекции</h1>
+    <p>Карточки товаров с описанием, ценой и привязкой к блоку.</p>
+  </div>
   <a class="button" href="/admin/lectures/new">Добавить лекцию</a>
 </div>
 <table>
@@ -13,12 +16,12 @@
     <td>{{ section.title }}</td>
     <td>{{ block.title }}</td>
     <td>
-      <strong>{{ lecture.title }}</strong>
-      {% if lecture.short_description %}<div class="muted">{{ lecture.short_description }}</div>{% endif %}
+      <span class="entity-title">{{ lecture.title }}</span>
+      {% if lecture.short_description %}<div class="entity-subtitle">{{ lecture.short_description }}</div>{% endif %}
     </td>
-    <td>{{ lecture.price }}</td>
+    <td><span class="money">{{ lecture.price }} ₽</span></td>
     <td>{{ lecture.sort_order }}</td>
-    <td>{{ "да" if lecture.is_active else "нет" }}</td>
+    <td><span class="badge {{ 'success' if lecture.is_active else 'neutral' }}">{{ "активна" if lecture.is_active else "скрыта" }}</span></td>
     <td class="actions">
       <a class="button secondary" href="/admin/lectures/{{ lecture.id }}/edit">Редактировать</a>
       <form method="post" action="/admin/lectures/{{ lecture.id }}/delete">
@@ -27,7 +30,7 @@
     </td>
   </tr>
   {% else %}
-  <tr><td colspan="8" class="muted">Лекций пока нет.</td></tr>
+  <tr><td colspan="8" class="empty-state">Лекций пока нет.</td></tr>
   {% endfor %}
 </table>
 {% endblock %}

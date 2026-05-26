@@ -8,9 +8,15 @@
 </head>
 <body>
   <header class="topbar">
-    <div><strong>Lecture Seller Admin</strong></div>
-    <div class="actions">
-      <span>{{ admin.username }}</span>
+    <div class="brand">
+      <div class="brand-mark">LS</div>
+      <div>
+        <span class="brand-title">Lecture Seller Admin</span>
+        <span class="brand-subtitle">Контент, продажи и поддержка</span>
+      </div>
+    </div>
+    <div class="admin-profile">
+      <span class="admin-chip">{{ admin.username }}</span>
       <form method="post" action="/admin/logout">
         <button class="secondary" type="submit">Выйти</button>
       </form>
@@ -18,16 +24,26 @@
   </header>
   <div class="layout">
     <nav class="sidebar">
-      <a href="/admin/dashboard">Dashboard</a>
-      <a href="/admin/sections">Разделы</a>
-      <a href="/admin/blocks">Блоки</a>
-      <a href="/admin/lectures">Лекции</a>
-      <a href="/admin/content">Материалы</a>
-      <a href="/admin/users">Пользователи</a>
-      <a href="/admin/purchases">Покупки</a>
-      <a href="/admin/payments">Платежи</a>
-      <a href="/admin/access">Доступы</a>
-      <a href="/admin/support">Поддержка</a>
+      {% set path = request.url.path %}
+      <div class="nav-section">
+        <p class="nav-label">Обзор</p>
+        <a class="nav-link {{ 'active' if path.startswith('/admin/dashboard') else '' }}" href="/admin/dashboard">Dashboard</a>
+      </div>
+      <div class="nav-section">
+        <p class="nav-label">Каталог</p>
+        <a class="nav-link {{ 'active' if path.startswith('/admin/sections') else '' }}" href="/admin/sections">Разделы</a>
+        <a class="nav-link {{ 'active' if path.startswith('/admin/blocks') else '' }}" href="/admin/blocks">Блоки</a>
+        <a class="nav-link {{ 'active' if path.startswith('/admin/lectures') else '' }}" href="/admin/lectures">Лекции</a>
+        <a class="nav-link {{ 'active' if path.startswith('/admin/content') else '' }}" href="/admin/content">Материалы</a>
+      </div>
+      <div class="nav-section">
+        <p class="nav-label">Операции</p>
+        <a class="nav-link {{ 'active' if path.startswith('/admin/users') else '' }}" href="/admin/users">Пользователи</a>
+        <a class="nav-link {{ 'active' if path.startswith('/admin/purchases') else '' }}" href="/admin/purchases">Покупки</a>
+        <a class="nav-link {{ 'active' if path.startswith('/admin/payments') else '' }}" href="/admin/payments">Платежи</a>
+        <a class="nav-link {{ 'active' if path.startswith('/admin/access') else '' }}" href="/admin/access">Доступы</a>
+        <a class="nav-link {{ 'active' if path.startswith('/admin/support') else '' }}" href="/admin/support">Поддержка</a>
+      </div>
     </nav>
     <main class="content">
       {% block content %}{% endblock %}

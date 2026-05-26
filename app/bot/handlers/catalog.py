@@ -192,9 +192,9 @@ async def create_pending_purchase(callback: CallbackQuery, session: AsyncSession
             payment_url = payment.confirmation_url
 
     text = (
-        f"Заявка на покупку <b>#{purchase.id}</b> создана.\n\n"
-        f"Сумма: <b>{_format_price(purchase.price)}</b>\n"
-        "Статус: ожидает оплаты.\n\n"
+        f"<b>Покупка #{purchase.id} создана</b>\n\n"
+        f"Сумма к оплате: <b>{_format_price(purchase.price)}</b>\n"
+        "<b>Статус:</b> <code>ОЖИДАЕТ ОПЛАТЫ</code>\n\n"
         f"{_payment_instruction(payment_url=payment_url, payment_error=payment_error)}"
     )
     reply_markup = (
@@ -235,8 +235,15 @@ async def _ensure_user(callback: CallbackQuery, session: AsyncSession) -> User |
 
 def _render_sections(sections: list[SectionDTO]) -> str:
     if not sections:
-        return "Каталог пока пуст. Разделы появятся после добавления в админ-панели."
-    return "<b>Каталог лекций</b>\n\nВыберите раздел:"
+        return (
+            "<b>Каталог пока пуст</b>\n\n"
+            "Разделы появятся здесь после добавления в админ-панели."
+        )
+    return (
+        "<b>Каталог лекций</b>\n\n"
+        "Выберите раздел, затем блок и конкретную лекцию. "
+        "Если удобнее работать в отдельном интерфейсе, откройте Mini App."
+    )
 
 
 def _render_section(section: SectionDTO, blocks: list[BlockDTO]) -> str:
@@ -250,14 +257,18 @@ def _render_section(section: SectionDTO, blocks: list[BlockDTO]) -> str:
     block_lines = "\n".join(
         f"• {escape(block.title)} - {_format_price(block.price)}" for block in blocks
     )
-    return f"<b>{escape(section.title)}</b>{description}\n\nБлоки:\n{block_lines}"
+    return (
+        f"<b>Раздел: {escape(section.title)}</b>{description}\n\n"
+        "<b>Доступные блоки:</b>\n"
+        f"{block_lines}"
+    )
 
 
 def _render_block(block: BlockDTO, lectures: list[LectureDTO]) -> str:
     description = f"\n\n{escape(block.description)}" if block.description else ""
     if not lectures:
         return (
-            f"<b>{escape(block.title)}</b>{description}\n\n"
+            f"<b>Блок: {escape(block.title)}</b>{description}\n\n"
             f"Цена блока: <b>{_format_price(block.price)}</b>\n\n"
             "В этом блоке пока нет активных лекций."
         )
@@ -266,16 +277,17 @@ def _render_block(block: BlockDTO, lectures: list[LectureDTO]) -> str:
         f"• {escape(lecture.title)} - {_format_price(lecture.price)}" for lecture in lectures
     )
     return (
-        f"<b>{escape(block.title)}</b>{description}\n\n"
+        f"<b>Блок: {escape(block.title)}</b>{description}\n\n"
         f"Цена блока: <b>{_format_price(block.price)}</b>\n\n"
-        f"Лекции:\n{lecture_lines}"
+        f"<b>Лекции в блоке:</b>\n{lecture_lines}"
     )
 
 
 def _render_lecture(lecture: LectureDTO) -> str:
     parts = [
-        f"<b>{escape(lecture.title)}</b>",
+        f"<b>Лекция: {escape(lecture.title)}</b>",
         f"Цена: <b>{_format_price(lecture.price)}</b>",
+        "<b>Статус:</b> доступ откроется после оплаты.",
     ]
 
     if lecture.short_description:
@@ -329,17 +341,21 @@ def _format_price(price: object) -> str:
 def _payment_instruction(*, payment_url: str | None, payment_error: bool) -> str:
     if payment_url is not None:
         return (
-            "Нажмите кнопку ниже для оплаты. "
-            "После оплаты нажмите «Проверить оплату», если доступ не появился автоматически."
+            "<b>Что сделать дальше:</b>\n"
+            "1. Нажмите «Перейти к оплате».\n"
+            "2. Завершите платеж в YooKassa.\n"
+            "3. Вернитесь в бот и нажмите «Проверить статус оплаты».\n\n"
+            "<b>Важно:</b> доступ появится только после подтверждения оплаты."
         )
 
     if payment_error:
         return (
-            "Не удалось создать платежную ссылку. "
+            "<b>Статус:</b> <code>ССЫЛКА НЕ СОЗДАНА</code>\n"
+            "Платежный провайдер временно не вернул ссылку. "
             "Попробуйте позже или напишите в поддержку."
         )
 
     return (
-        "YooKassa пока не настроена. Заявка сохранена, "
-        "платежная ссылка появится после настройки платежного провайдера."
+        "<b>Статус:</b> <code>ОПЛАТА ВРЕМЕННО НЕДОСТУПНА</code>\n"
+        "Заявка сохранена. Платежная ссылка появится после настройки YooKassa."
     )

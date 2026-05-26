@@ -28,7 +28,10 @@ logger = get_logger(__name__)
 async def start_support_request(message: Message, state: FSMContext) -> None:
     await state.set_state(SupportRequestStates.waiting_for_message)
     await message.answer(
-        "Напишите вопрос одним сообщением. Мы сохраним обращение и передадим его администратору.",
+        "<b>Поддержка</b>\n\n"
+        "Напишите вопрос одним сообщением. Лучше сразу укажите, что произошло: "
+        "оплата, доступ к материалам, ошибка загрузки или другой вопрос.\n\n"
+        "<b>Статус:</b> обращение будет сохранено и передано администратору.",
         reply_markup=build_support_cancel_keyboard(),
     )
 
@@ -38,7 +41,8 @@ async def start_support_request(message: Message, state: FSMContext) -> None:
 async def cancel_support_request(message: Message, state: FSMContext) -> None:
     await state.clear()
     await message.answer(
-        "Обращение отменено.",
+        "<b>Обращение отменено.</b>\n\n"
+        "Вы можете вернуться в поддержку в любой момент.",
         reply_markup=build_main_menu_keyboard(),
     )
 
@@ -51,7 +55,10 @@ async def submit_support_request(
     bot: Bot,
 ) -> None:
     if not message.text:
-        await message.answer("Пожалуйста, отправьте вопрос текстом.")
+        await message.answer(
+            "<b>Нужен текстовый вопрос.</b>\n\n"
+            "Пожалуйста, отправьте обращение одним текстовым сообщением."
+        )
         return
 
     user = await _ensure_user(message, session)
@@ -63,7 +70,8 @@ async def submit_support_request(
         )
     except SupportRequestError:
         await message.answer(
-            "Сообщение должно быть от 5 до 4000 символов. Попробуйте ещё раз.",
+            "<b>Сообщение не подходит по длине.</b>\n\n"
+            "Напишите от 5 до 4000 символов и отправьте вопрос еще раз.",
             reply_markup=build_support_cancel_keyboard(),
         )
         return
@@ -71,7 +79,9 @@ async def submit_support_request(
     await state.clear()
     await _notify_admins(bot, support_request, user)
     await message.answer(
-        f"Обращение #{support_request.id} принято. Администратор ответит вам позже.",
+        f"<b>Обращение #{support_request.id} принято</b>\n\n"
+        "<b>Статус:</b> <code>ОТКРЫТО</code>\n\n"
+        "Администратор увидит ваш вопрос и ответит позже.",
         reply_markup=build_main_menu_keyboard(),
     )
 
